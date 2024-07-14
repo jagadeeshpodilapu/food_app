@@ -23,3 +23,4 @@ export const validateMyUserRequest = [
   body("country").isString().notEmpty().withMessage("country must be string"),
   handleValidationErrors,
 ];
+
