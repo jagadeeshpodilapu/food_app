@@ -7,7 +7,8 @@ import MobileNavLinks from "./MobileNavLinks";
 
 const MobileNav = () => {
 
-    const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+    //const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+    const { isAuthenticated, user } = useAuth0();
     return (
         <Sheet>
             <SheetTrigger>
