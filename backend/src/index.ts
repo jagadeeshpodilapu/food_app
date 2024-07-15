@@ -11,7 +11,12 @@ const app = express();
 app.use(express.json()); //convert any body to json
 app.use(cors());
 
-app.use("/api/my/user",myUserRoute);
+
+app.get("/health", async (req: Request, res: Response) => {
+    res.send({message:"Health OK!"})
+ })
+
+app.use("/api/my/user", myUserRoute);
 
 app.listen(3000, () => {
     console.log("Server statrted on localhost:3000");
