@@ -7,8 +7,7 @@ import MobileNavLinks from "./MobileNavLinks";
 
 const MobileNav = () => {
 
-    //const { isAuthenticated, loginWithRedirect, user } = useAuth0();
-    const { isAuthenticated, user } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, user } = useAuth0();
     return (
         <Sheet>
             <SheetTrigger>
@@ -30,9 +29,9 @@ const MobileNav = () => {
                 <Separator />
                 <SheetDescription className="flex flex-col gap-4">
                     {
-                        isAuthenticated ? <MobileNavLinks /> : (<Button className="flex-1 font-bold bg-orange-500">Log In</Button>)
+                        isAuthenticated ? <MobileNavLinks /> : (<Button className="flex-1 font-bold bg-orange-500" onClick={async () => loginWithRedirect()}>Log In</Button>)
                     }
-
+ 
                 </SheetDescription>
             </SheetContent>
         </Sheet>

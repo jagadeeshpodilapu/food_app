@@ -24,3 +24,26 @@ export const validateMyUserRequest = [
   handleValidationErrors,
 ];
 
+export const validateMyRestaurantRequest = [
+  body("restaurantName").notEmpty().withMessage("Restaurant name is required"),
+  body("city").notEmpty().withMessage("city  is required"),
+  body("country").notEmpty().withMessage("country is required"),
+  body("deliveryPrice")
+    .isFloat({ min: 0 })
+    .withMessage("deliveryPrice is required"),
+  body("estimatedDeliveryTime")
+    .isInt({ min: 0 })
+    .withMessage("estimatedDeliveryTime is required"),
+  body("cuisines")
+    .isArray()
+    .withMessage("cuisines must be an array")
+    .not()
+    .isEmpty()
+    .withMessage("cuisines array cannot be empty"),
+  body("menuItems").isArray().withMessage("cuisines must be an array"),
+  body("menuItems.*.name").notEmpty().withMessage("menu item name is required"),
+  body("menuItems.*.price")
+    .isFloat({ min: 0 })
+    .withMessage("price is required"),
+  handleValidationErrors,
+];
