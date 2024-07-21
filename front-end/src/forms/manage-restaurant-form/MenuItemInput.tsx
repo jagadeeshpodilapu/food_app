@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
 
 type Props = {
-  index: Number;
+  index: number;
   removeMenuItem: () => void;
 };
 
@@ -30,7 +30,7 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
             <FormControl>
               <Input
                 {...field}
-                placeholder="cheese Pizza"
+                placeholder="Cheese Pizza"
                 className="bg-white"
               />
             </FormControl>
@@ -43,11 +43,10 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center gap-1">
-              Price (₹)
-              <FormMessage />
+              Price (£) <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="8.0" className="bg-white" />
+              <Input {...field} placeholder="8.00" className="bg-white" />
             </FormControl>
           </FormItem>
         )}

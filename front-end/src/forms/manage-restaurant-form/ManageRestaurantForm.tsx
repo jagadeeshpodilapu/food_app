@@ -1,9 +1,9 @@
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import DetailsSection from "./DetailsSection";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "@/components/ui/separator";
 import CuisinesSection from "./CuisinesSection";
 import MenuSection from "./MenuSection";
 import ImageSection from "./ImageSection";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   restaurantName: z.string({
-    required_error: "restaurant name is required",
+    required_error: "restuarant name is required",
   }),
   city: z.string({
     required_error: "city is required",
@@ -21,15 +21,15 @@ const formSchema = z.object({
     required_error: "country is required",
   }),
   deliveryPrice: z.coerce.number({
-    required_error: "deliveryPrice is required",
+    required_error: "delivery price is required",
     invalid_type_error: "must be a valid number",
   }),
   estimatedDeliveryTime: z.coerce.number({
-    required_error: "estimatedDeliveryTime is required",
+    required_error: "estimated delivery time is required",
     invalid_type_error: "must be a valid number",
   }),
   cuisines: z.array(z.string()).nonempty({
-    message: "please selected at least one item",
+    message: "please select at least one item",
   }),
   menuItems: z.array(
     z.object({
@@ -40,7 +40,7 @@ const formSchema = z.object({
   imageFile: z.instanceof(File, { message: "image is required" }),
 });
 
-type restaurantFormData = z.infer<typeof formSchema>;
+type RestaurantFormData = z.infer<typeof formSchema>;
 
 type Props = {
   onSave: (restaurantFormData: FormData) => void;
@@ -48,7 +48,8 @@ type Props = {
 };
 
 const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
-  const form = useForm<restaurantFormData>({
+  console.log("on save called");
+  const form = useForm<RestaurantFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       cuisines: [],
@@ -56,14 +57,48 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
     },
   });
 
-  const onSubmit = (formDataJson: restaurantFormData) => {
-    //TODO - convert formDataJson to new FormData object
+  const onSubmit = (formDataJson: RestaurantFormData) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("restaurantName", formDataJson.restaurantName);
+      formData.append("city", formDataJson.city);
+      formData.append("country", formDataJson.country);
+
+      formData.append(
+        "deliveryPrice",
+        (formDataJson.deliveryPrice * 100).toString()
+      );
+      formData.append(
+        "estimatedDeliveryTime",
+        formDataJson.estimatedDeliveryTime.toString()
+      );
+      formDataJson.cuisines.forEach((cuisine, index) => {
+        formData.append(`cuisines[${index}]`, cuisine);
+      });
+      formDataJson.menuItems.forEach((menuItem, index) => {
+        formData.append(`menuItems[${index}][name]`, menuItem.name);
+        formData.append(
+          `menuItems[${index}][price]`,
+          (menuItem.price * 100).toString()
+        );
+      });
+
+      if (formDataJson.imageFile) {
+        formData.append(`imageFile`, formDataJson.imageFile);
+      }
+
+      onSave(formData);
+    } catch (error) {
+      console.error("Error stringifying form data JSON:", error);
+    }
   };
 
+  const onInvalid = (error: any) => console.log(error);
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         className="space-y-8 bg-gray-50 p-10 rounded-lg"
       >
         <DetailsSection />

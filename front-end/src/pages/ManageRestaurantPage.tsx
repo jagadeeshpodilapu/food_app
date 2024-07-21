@@ -1,13 +1,14 @@
+import { useCreateMyRestaurant } from "@/api/MyRestaurantApi";
 import ManageRestaurantForm from "@/forms/manage-restaurant-form/ManageRestaurantForm";
-import React from "react";
 
 const ManageRestaurantPage = () => {
+
+  const { createRestaurant, isLoading } = useCreateMyRestaurant();
+  console.log(isLoading);
   return (
     <ManageRestaurantForm
-      onSave={function (restaurantFormData: FormData): void {
-        throw new Error("Function not implemented.");
-      }}
-      isLoading={false}
+      onSave={createRestaurant}
+      isLoading={isLoading}
     />
   );
 };

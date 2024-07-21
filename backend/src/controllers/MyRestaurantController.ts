@@ -27,16 +27,20 @@ const createMyRestaurant = async (req: Request, res: Response) => {
   }
 };
 
-const uploadImage = async (file: Express.Multer.File) => {
-    console.log(file);
-  const image = file;
-  const base64Image = Buffer.from(image.buffer).toString("base64");
-  const dataURI = `data:${image.mimetype};base64,${base64Image}`;
+const uploadImage = async (file: Express.Multer.File):Promise<string> => {
+  try {
+    const base64Image = Buffer.from(file.buffer).toString("base64");
+    const dataURI = `data:${file.mimetype};base64,${base64Image}`;
 
-  const uploadResponse = await cloudinary.v2.uploader.upload(dataURI, {
-    resource_type: "auto",
-  });
-  return uploadResponse.url;
+    const uploadResponse = await cloudinary.v2.uploader.upload(dataURI, {
+      resource_type: "auto",
+    });
+
+    return uploadResponse.secure_url;
+  } catch (error) {
+    console.error("Error uploading image to Cloudinary:", error);
+    throw new Error("Image upload failed");
+  }
 };
 
 export default {
