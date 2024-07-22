@@ -31,12 +31,7 @@ export const useGetMyRestaurant = () => {
 
   } = useQuery("fetchMyRestaurant", getMyRestaurantRequest);
 
-  // if (isSuccess) {
-  //   toast.success("Restaurant data fetch successful");
-  // }
-  // if (error) {
-  //   toast.error("unable to fetch restaurant data");
-  // }
+
 
   return { getRestaurant, isLoading };
 };
@@ -78,4 +73,43 @@ export const useCreateMyRestaurant = () => {
   }
 
   return { createRestaurant, isLoading };
+};
+
+export const useUpdateMyRestaurant = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const updateRestaurantRequest = async (
+    restaurantFormData: FormData
+  ): Promise<Restaurant> => {
+    const accessToken = await getAccessTokenSilently();
+
+    const response = await fetch(`${API_BASE_URL}/api/my/restaurant`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: restaurantFormData,
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create restaurant");
+    }
+
+    return response.json();
+  };
+
+  const {
+    mutate: updateRestaurant,
+    isLoading,
+    isSuccess,
+    error,
+  } = useMutation(updateRestaurantRequest);
+
+  if (isSuccess) {
+    toast.success("Restaurant Created!");
+  }
+  if (error) {
+    toast.error("Unable to update restaurant");
+  }
+
+  return { updateRestaurant, isLoading };
 };

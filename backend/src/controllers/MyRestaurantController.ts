@@ -3,24 +3,20 @@ import Restaurant from "../models/restaurent";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 
-
-const  getMyRestaurant=async(req:Request,res:Response)=>{
-
+const getMyRestaurant = async (req: Request, res: Response) => {
   try {
-    const restaurant=await Restaurant.findOne({user:req.userId});
+    const restaurant = await Restaurant.findOne({ user: req.userId });
 
-    if(!restaurant){
-      return res.status(404).json({message:"restaurant not found"});
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant not found" });
     }
 
     res.json(restaurant);
-    
   } catch (error) {
     console.log(error);
-    res.status(500).json({message:"Error fetching restaurant"});
+    res.status(500).json({ message: "Error fetching restaurant" });
   }
-
-}
+};
 
 const createMyRestaurant = async (req: Request, res: Response) => {
   try {
@@ -46,7 +42,38 @@ const createMyRestaurant = async (req: Request, res: Response) => {
   }
 };
 
-const uploadImage = async (file: Express.Multer.File):Promise<string> => {
+const updateMyRestaurant = async (req: Request, res: Response) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+
+    if (!restaurant) {
+      res.status(404).json({ message: "restaurant not found !" });
+    }
+    if (restaurant) {
+      restaurant.restaurantName = req.body.restaurantName;
+      restaurant.city = req.body.city;
+      restaurant.country = req.body.country;
+      restaurant.deliveryPrice = req.body.deliveryPrice;
+      restaurant.estimatedDeliveryTime = req.body.estimatedDeliveryTime;
+      restaurant.cuisines = req.body.cuisines;
+      restaurant.menuItems = req.body.menuItems;
+      restaurant.lastUpdated = new Date();
+
+      if(req.file){ 
+        const imageUrl = await uploadImage(req.file as Express.Multer.File);
+        restaurant.imageUrl = imageUrl;
+      }
+      await restaurant.save();
+
+    res.status(200).send(restaurant);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const uploadImage = async (file: Express.Multer.File): Promise<string> => {
   try {
     const base64Image = Buffer.from(file.buffer).toString("base64");
     const dataURI = `data:${file.mimetype};base64,${base64Image}`;
@@ -65,5 +92,5 @@ const uploadImage = async (file: Express.Multer.File):Promise<string> => {
 export default {
   getMyRestaurant,
   createMyRestaurant,
-
+  updateMyRestaurant,
 };
