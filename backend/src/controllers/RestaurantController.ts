@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Restaurant from "../models/restaurent";
-import { Regex } from "lucide-react";
 
 const searchRestaurant = async (req: Request, res: Response) => {
     try {
